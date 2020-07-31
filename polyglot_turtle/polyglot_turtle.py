@@ -96,7 +96,7 @@ class PolyglotTurtle(HidCborRpcDevice):
 
     def i2c_exchange(self,
                      address: int,
-                     write_data: bytes,
+                     write_data: bytes = b"",
                      read_size: int = 0,
                      clock_rate: I2cClockRate = I2cClockRate.STANDARD,
                      transaction_timeout_ms: int = 50):

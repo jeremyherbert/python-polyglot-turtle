@@ -52,12 +52,15 @@ class HidCborRpcDevice(object):
 
         self._cbor_id = 1
         self._function_index_table = {}
+        self._max_size = 512
 
         self._ping()
         if self._get_rpc_version() != 1:
             raise ConnectFailedException("Invalid RPC version")
 
         self._update_function_index_table()
+
+        self._max_size = self._execute_command("max_size")
 
     def _ping(self):
         if self._execute_command("__ping") != "pong":
@@ -91,9 +94,11 @@ class HidCborRpcDevice(object):
 
         encoded = SimpleHDLC.encode(cbor2.dumps(command))
 
+        if len(encoded) > self._max_size:
+            raise ValueError("Packet is too long to send to device")
+
         tx_count = 0
         while True:
-
             bytes_remaining = len(encoded) - tx_count
             if bytes_remaining <= 0:
                 break
