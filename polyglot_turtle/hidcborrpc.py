@@ -99,12 +99,12 @@ class HidCborRpcDevice(object):
                 break
 
             if bytes_remaining >= 64:
-                self._hid.write(encoded[tx_count:tx_count+64])
+                self._hid.write(b"\x00" + encoded[tx_count:tx_count+64])
             else:
                 buf = encoded[tx_count:]
                 buf = buf + bytes([SimpleHDLC.FRAME_BOUNDARY_MARKER] * (64-len(buf)))
                 assert len(buf) == 64
-                self._hid.write(buf)
+                self._hid.write(b"\x00" + buf)
             tx_count += 64
 
         while True:

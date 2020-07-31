@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="polyglot-turtle",
-    version="0.0.1",
+    version="0.0.2",
     author="Jeremy Herbert",
     author_email="jeremy.006@gmail.com",
     description="A python driver for the polyglot-turtle firmware",
@@ -18,6 +18,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=['hidapi', 'cbor2', 'packaging'],
+    install_requires=['hidapi', 'cbor2', 'packaging', 'simplehdlc'],
     python_requires='>=3.6',
 )
