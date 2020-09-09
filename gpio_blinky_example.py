@@ -1,21 +1,31 @@
 # SPDX-License-Identifier: MIT
 
 import time
-from polyglot_turtle import PolyglotTurtleXiao, PinDirection
+from polyglot_turtle import PolyglotTurtleXiao, PinDirection, PinPullMode
 
 # the following code blinks LEDs on GPIO 2 and 3
 
 if __name__ == "__main__":
     pt = PolyglotTurtleXiao()  # you may need to provide a serial number here to select the correct device
 
-    pt.gpio_set_direction(2, PinDirection.OUTPUT)
-    pt.gpio_set_direction(3, PinDirection.OUTPUT)
+    button_pin = 1
+    red_led_pin = 2
+    green_led_pin = 3
 
-    while True:
-        pt.gpio_set_level(2, True)
-        pt.gpio_set_level(3, True)
-        time.sleep(0.1)
+    pt.gpio_set_direction(button_pin, PinDirection.INPUT)
+    pt.gpio_set_pull(button_pin, PinPullMode.NONE)
 
-        pt.gpio_set_level(2, False)
-        pt.gpio_set_level(3, False)
-        time.sleep(0.1)
+    pt.gpio_set_direction(red_led_pin, PinDirection.OUTPUT)
+    pt.gpio_set_direction(green_led_pin, PinDirection.OUTPUT)
+
+    while 1:
+        pt.gpio_set_level(red_led_pin, True)
+        pt.gpio_set_level(green_led_pin, False)
+        time.sleep(0.5)
+
+        pt.gpio_set_level(red_led_pin, False)
+        pt.gpio_set_level(green_led_pin, True)
+        time.sleep(0.5)
+
+        while pt.gpio_get_level(button_pin):
+            time.sleep(0.01)
