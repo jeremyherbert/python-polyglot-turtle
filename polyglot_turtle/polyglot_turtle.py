@@ -118,7 +118,7 @@ class PolyglotTurtle(HidCborRpcDevice):
         if pin_number > 4:
             raise ValueError("Invalid pin number")
 
-        self._execute_command("pwm_set", [pin_number, clock_rate_index, counter_period, duty_cycle])
+        self._execute_command("pwm_set", [pin_number, clock_rate_index, int(counter_period), int(duty_cycle)])
 
 
 class PolyglotTurtleXiao(PolyglotTurtle):

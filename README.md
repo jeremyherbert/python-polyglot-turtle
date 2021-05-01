@@ -195,6 +195,8 @@ To instruct the device to output a PWM signal, you need to pass the following ar
 - the counter duty cycle 
 - optionally, the clock rate index (the index of the clock rate you wish to use from the clock rate array)
 
+Note that all of these values should be integers, not floating point/decimal numbers.
+
 The counter model used by the polyglot-turtle device is fairly simple. The counter will count from 0 to the counter period value at the specified clock rate. When the counter period value is reached, the counter will reset to 0 and begin counting up again. The PWM output is controlled by the comparison between the current counter value and the supplied duty cycle value:
 
 1. if the counter < duty cycle, set output high
