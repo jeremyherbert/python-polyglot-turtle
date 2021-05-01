@@ -5,7 +5,7 @@ import enum
 from packaging.version import Version
 from .hidcborrpc import HidCborRpcDevice
 
-POLYGLOT_API_VERSION = "0.1.0"
+POLYGLOT_API_VERSION = "0.2.0"
 
 
 class PinDirection(enum.IntEnum):
@@ -110,6 +110,15 @@ class PolyglotTurtle(HidCborRpcDevice):
                      cs_pin: int = 0xFF,
                      read_size=None):
         return self.spi_exchange_by_index(0, write_data, clock_rate, mode, transaction_timeout_ms, cs_pin, read_size)
+
+    def pwm_get_info(self):
+        return self._execute_command("pwm_get_info")
+
+    def pwm_set(self, pin_number: int, counter_period: int, duty_cycle: int, clock_rate_index=0):
+        if pin_number > 4:
+            raise ValueError("Invalid pin number")
+
+        self._execute_command("pwm_set", [pin_number, clock_rate_index, counter_period, duty_cycle])
 
 
 class PolyglotTurtleXiao(PolyglotTurtle):

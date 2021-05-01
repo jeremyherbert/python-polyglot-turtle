@@ -178,6 +178,30 @@ Since the I2C standard only allows three specific clock rates, the polyglot-turt
 - `FAST`: 400kHz
 - `FAST_PLUS`: 1MHz
 
+### PWM
+
+Pulse Width Modulation (PWM) signals can be used for driving motors and dimming LEDs. PWM can be enabled on GPIO pins as necessary (for the polyglot-turtle-xiao it is only supported on GPIO 2 and 3).
+
+To use the PWM functionality, one must first call the function `pwm_get_info`. This will return an array containing information about the PWM capabilities of the device: 
+
+1. The first element of the array is the maximum value the internal counter can count up to
+2. The second element is the maximum value for the compare threshold
+3. The final element is an array of all possible counter clock rates. The fastest clock rate will be element 0, with any others sorted in order of decreasing frequency.
+
+To instruct the device to output a PWM signal, you need to pass the following arguments to `pwm_set`:
+
+- the gpio pin number to use for the output
+- the counter period 
+- the counter duty cycle 
+- optionally, the clock rate index (the index of the clock rate you wish to use from the clock rate array)
+
+The counter model used by the polyglot-turtle device is fairly simple. The counter will count from 0 to the counter period value at the specified clock rate. When the counter period value is reached, the counter will reset to 0 and begin counting up again. The PWM output is controlled by the comparison between the current counter value and the supplied duty cycle value:
+
+1. if the counter < duty cycle, set output high
+2. else set output low
+
+For an example of using this functionality, take a look at the `pwm_servo.py` example in this repository. This example generates a PWM signal with a 20ms period and a 1-2ms varying duty cycle to drive a servo motor.
+
 ## Further examples
 
 There are some simple examples in the git repository you can look at for more information.
