@@ -120,6 +120,15 @@ class PolyglotTurtle(HidCborRpcDevice):
 
         self._execute_command("pwm_set", [pin_number, clock_rate_index, int(counter_period), int(duty_cycle)])
 
+    def dac_get_info(self):
+        return self._execute_command("dac_get_info")
+
+    def dac_set(self, pin_number: int, dac_level: int):
+        if pin_number > 4:
+            raise ValueError("Invalid pin number")
+
+        self._execute_command("dac_set", [pin_number, dac_level])
+
 
 class PolyglotTurtleXiao(PolyglotTurtle):
     def __init__(self, serial_number: str = None, vendor_id: int = 0x04d8, product_id: int = 0xeb74, timeout: int = 1):
