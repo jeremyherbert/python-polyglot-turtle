@@ -129,6 +129,12 @@ class PolyglotTurtle(HidCborRpcDevice):
 
         self._execute_command("dac_set", [pin_number, dac_level])
 
+    def adc_get(self, pin_number: int):
+        if pin_number > 4:
+            raise ValueError("Invalid pin number")
+
+        return self._execute_command("adc_get", [pin_number])
+
 
 class PolyglotTurtleXiao(PolyglotTurtle):
     def __init__(self, serial_number: str = None, vendor_id: int = 0x04d8, product_id: int = 0xeb74, timeout: int = 1):
