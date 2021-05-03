@@ -8,6 +8,12 @@ To install, run
 pip install polyglot-turtle
 ```
 
+or 
+
+```
+python -m pip install polyglot-turtle
+```
+
 Only python 3.6+ is supported. This driver does not expose any USB-to-serial functionality, for that you should use something like [pyserial](https://pypi.org/project/pyserial/).
 
 ## Extra install instructions for Linux users
@@ -180,7 +186,7 @@ Since the I2C standard only allows three specific clock rates, the polyglot-turt
 
 ### PWM
 
-Pulse Width Modulation (PWM) signals can be used for driving motors and dimming LEDs. PWM can be enabled on GPIO pins as necessary (for the polyglot-turtle-xiao it is only supported on GPIO 2 and 3).
+[Pulse Width Modulation (PWM)](https://en.wikipedia.org/wiki/Pulse-width_modulation) signals can be used for driving motors and dimming LEDs. PWM can be enabled on GPIO pins if it is supported (see device pinout for more information).
 
 To use the PWM functionality, one must first call the function `pwm_get_info`. This will return an array containing information about the PWM capabilities of the device: 
 
@@ -203,6 +209,55 @@ The counter model used by the polyglot-turtle device is fairly simple. The count
 2. else set output low
 
 For an example of using this functionality, take a look at the `pwm_servo.py` example in this repository. This example generates a PWM signal with a 20ms period and a 1-2ms varying duty cycle to drive a servo motor.
+
+### DAC
+
+A [Digital to Analog Converter (DAC)](https://en.wikipedia.org/wiki/Digital-to-analog_converter) transforms a number into a voltage across a specific voltage range. To use the DAC, one can request the range information about the DAC, and then use that to instruct the DAC to output a specific voltage.
+
+```python
+from polyglot_turtle import PolyglotTurtleXiao
+
+pt = PolyglotTurtleXiao()
+maximum_dac_value, maximum_dac_voltage = pt.dac_get_info()
+
+voltage_to_output = 1.2  # volts
+dac_value = int(voltage_to_output * (maximum_dac_value+1)/maximum_dac_voltage)
+
+pt.dac_set(0, 123)
+```
+
+The `dac_get_info` function returns two numbers:
+
+1. The maximum value the DAC will accept (2^(N-1) for an N bit DAC)
+2. The maximum voltage that the DAC is able to output
+
+Using those two pieces of information, one can calculate the DAC value to use to generate a specific output voltage using the `dac_set` function. The first argument of the `dac_set` function is the GPIO number of the pin to use, and the second argument is the DAC value as an integer. Note that the result of any calculations must be converted to an integer
+
+The output will be limited by the resolution and performance of the DAC in the device.
+
+### ADC
+
+The [Analog to Digital Converter (ADC)](https://en.wikipedia.org/wiki/Analog-to-digital_converter) functionality is used to read an analog voltage and report the value as a number. To use it, pass the GPIO number for the pin you wish to read the voltage on to the `adc_get` function:
+
+```python
+from polyglot_turtle import PolyglotTurtleXiao
+
+pt = PolyglotTurtleXiao()
+reading, max_reading, max_voltage = pt.adc_get(1)
+
+# calculate the actual voltage at the pin
+voltage_reading = reading * max_voltage / (max_reading+1)
+```
+
+This function returns three numbers:
+
+1. The ADC conversion result as an integer
+2. The maximum possible reading that the ADC could return as an integer (typically 2^(N-1) for an N bit ADC)
+3. The voltage which corresponds to the maximum ADC reading
+
+You can then calculate the actual voltage reading using the formula in the example above. Note that the reading will be limited by the resolution and performance of the ADC in the device.
+
+The file `adc_example.py` shows a combination of using the DAC to generate a voltage, and then a conversion of that voltage back into a number using the ADC.
 
 ## Further examples
 

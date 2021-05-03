@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="polyglot-turtle",
-    version="0.0.4",
+    version="0.2.0",
     author="Jeremy Herbert",
     author_email="jeremy.006@gmail.com",
     description="A python driver for the polyglot-turtle firmware",
