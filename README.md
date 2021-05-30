@@ -18,7 +18,7 @@ Only python 3.6+ is supported. This driver does not expose any USB-to-serial fun
 
 ## Extra install instructions for Linux users
 
-This library depends on [cython-hidapi](https://github.com/trezor/cython-hidapi) which requires you to install some extra binary dependencies. On Ubuntu (tested on 18.04), you can install these dependencies using the following command:
+This library depends on [cython-hidapi](https://github.com/trezor/cython-hidapi) which requires you to install some extra binary dependencies. On Ubuntu (tested on 18.04 and 20.04), you can install these dependencies using the following command:
 
 ```
 sudo apt-get install python3-dev libusb-1.0-0-dev libudev-dev
@@ -107,7 +107,7 @@ pt.gpio_set_pull(1, PinPullMode.NONE)  # leave the input floating
 
 ### SPI
 
-To use the SPI interface, connect one of the GPIO pins to the CS pin of your target device, and otherwise connect MISO, MOSI and SCK as usual.
+To use the [Serial Peripheral Interface](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface) (SPI), connect one of the GPIO pins to the CS pin of your target device, and otherwise connect MISO, MOSI and SCK as usual.
 
 The polyglot-turtle firmware supports a single SPI operation, called 'exchange'. This can be used to interact with any SPI device, and even some non-SPI devices too! In an exchange operation, the polyglot-turtle firmware will write all of the bytes provided to the target device, and return all of the bytes read back from the device. As SPI requires the device to shift out one byte for every byte shifted in, you will receive the same number of bytes that was written.
 
@@ -140,7 +140,7 @@ print(pt.spi_exchange(b"\x01\x02\x03", clock_rate=100000, mode=0, cs_pin=0, tran
 
 ### I2C
 
-Almost all I2C transactions can be broken down into combinations of three operations:
+Almost all [Inter-Integrated Circuit](https://en.wikipedia.org/wiki/I%C2%B2C) (I2C) transactions can be broken down into combinations of three operations:
 
 1. (Write operation) START, Address + Write, write N bytes, STOP
 2. (Read operation) START, Address + Read, read N bytes, STOP
