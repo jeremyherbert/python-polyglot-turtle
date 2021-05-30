@@ -223,7 +223,7 @@ maximum_dac_value, maximum_dac_voltage = pt.dac_get_info()
 voltage_to_output = 1.2  # volts
 dac_value = int(voltage_to_output * (maximum_dac_value+1)/maximum_dac_voltage)
 
-pt.dac_set(0, 123)
+pt.dac_set(0, dac_value)
 ```
 
 The `dac_get_info` function returns two numbers:
@@ -231,9 +231,9 @@ The `dac_get_info` function returns two numbers:
 1. The maximum value the DAC will accept (2^(N-1) for an N bit DAC)
 2. The maximum voltage that the DAC is able to output
 
-Using those two pieces of information, one can calculate the DAC value to use to generate a specific output voltage using the `dac_set` function. The first argument of the `dac_set` function is the GPIO number of the pin to use, and the second argument is the DAC value as an integer. Note that the result of any calculations must be converted to an integer
+Using those two pieces of information, one can calculate the DAC value to use to generate a specific output voltage using the `dac_set` function. The first argument of the `dac_set` function is the GPIO number of the pin to use, and the second argument is the DAC value as an integer. Note that the result of any calculations must be converted to an integer before passing it to the `dac_set` function.
 
-The output will be limited by the resolution and performance of the DAC in the device.
+Please note that the output will be limited by the resolution and performance of the DAC in the device.
 
 ### ADC
 
