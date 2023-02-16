@@ -24,11 +24,11 @@ This library depends on [cython-hidapi](https://github.com/trezor/cython-hidapi)
 sudo apt-get install python3-dev libusb-1.0-0-dev libudev-dev
 ```
 
-By default, Linux does not allow access to USB or HID devices for a non-root user. To give access to your own user is simple. First, in `/etc/udev/rules.d`, create a new file called `00-polyglot-turtle.rules` and paste the following two lines in:
+By default, Linux does not allow access to USB or HID devices for a non-root user. To give access to your own user is simple. First, in `/etc/udev/rules.d`, create a new file called `99-polyglot-turtle.rules` and paste the following two lines in:
 
 ```
-ATTR{idVendor}=="04d8", ATTR{idProduct}=="eb74", ENV{ID_MM_DEVICE_IGNORE}="1"
-KERNEL=="hidraw*", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb74", MODE="0660", GROUP="plugdev", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb74", MODE="0660", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl", ENV{ID_MM_DEVICE_IGNORE}="1"
+KERNEL=="hidraw*", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb74", MODE="0660", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl"
 ```
 
 This will give access to any user in the `plugdev` group. Now, just add yourself to the group:
@@ -61,7 +61,14 @@ from polyglot_turtle import PolyglotTurtleXiao
 pt = PolyglotTurtleXiao(serial_number="9B1EC96D5053574C342E3120FF02110D")
 ```
 
-All devices have a unique serial number that is associated with the USB device. You can find this number in Windows using Device Manager, in Mac OS using System Report, and in Linux using `lsusb`.
+All devices have a unique serial number that is associated with the USB device. You can find this number in Windows using Device Manager, in Mac OS using System Report, and in Linux using `lsusb`. You can also use this library to return a list of the serial numbers of all connected devices:
+
+```python
+from polyglot_turtle import list_polyglot_turtle_xiao_devices
+
+print(list_polyglot_turtle_xiao_devices())
+# prints all serial numbers, for example ['9B1EC96D5053574C342E3120FF02110D']
+```
 
 ### GPIO
 
@@ -258,6 +265,42 @@ This function returns three numbers:
 You can then calculate the actual voltage reading using the formula in the example above. Note that the reading will be limited by the resolution and performance of the ADC in the device.
 
 The file `adc_example.py` shows a combination of using the DAC to generate a voltage, and then a conversion of that voltage back into a number using the ADC.
+
+## Programming AVR microcontrollers (experimental)
+
+It is possible to use python-polyglot-turtle to program AVR microcontrollers via the standard ISP interface. However, since there are no hardware protection circuits on the polyglot-turtle, there are a few limitations you need to be aware of:
+
+1. You should only use this functionality if the SPI port on the AVR is unused by your firmware (the `MISO`, `MOSI` and `SCK` pins).
+2. There should be nothing already connected to the `RESET` pin on the AVR except for a pull-up resistor.
+3. The AVR must be powered by a 3.3V supply
+
+If your circuit meets all of these requirements, you can program your microcontroller directly with the polyglot-turtle. 
+
+### Software setup
+
+This functionality relies on the open source tool [avrdude](https://github.com/avrdudes/avrdude) to generate the flashing instructions for the polyglot-turtle to use. 
+
+If you are on Windows, you can install a [special package](https://github.com/jeremyherbert/avrdude_windows_pypi) with `pip` that allows python to access `avrdude`:
+
+```
+python -m pip install --upgrade avrdude-windows
+```
+
+On Mac you can use the [Homebrew package manager](https://brew.sh/):
+
+```
+brew install avrdude
+```
+
+If you are on Linux, you can simply use your package manager to install this tool:
+
+```
+sudo apt install avrdude
+```
+
+### Flashing your firmware
+
+Please see the `avr_program.py` example. This writes the firmware file `test.hex` to an atmega328p.
 
 ## Further examples
 

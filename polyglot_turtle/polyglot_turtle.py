@@ -1,11 +1,13 @@
 # SPDX-License-Identifier: MIT
 
 import enum
+from typing import Optional
 
 from packaging.version import Version
 from .hidcborrpc import HidCborRpcDevice
 
-POLYGLOT_API_VERSION = "0.2.0"
+
+POLYGLOT_API_VERSION = "0.3.0"
 
 
 class PinDirection(enum.IntEnum):
@@ -134,6 +136,25 @@ class PolyglotTurtle(HidCborRpcDevice):
             raise ValueError("Invalid pin number")
 
         return self._execute_command("adc_get", [pin_number])
+
+    def openocd_jtag(self, tdi_pin: int, tdo_pin: int, tms_pin: int, tck_pin: int, commands: bytes):
+        if not 0 <= tdi_pin <= 3:
+            raise ValueError("Invalid pin number")
+        if not 0 <= tdo_pin <= 3:
+            raise ValueError("Invalid pin number")
+        if not 0 <= tms_pin <= 3:
+            raise ValueError("Invalid pin number")
+        if not 0 <= tck_pin <= 3:
+            raise ValueError("Invalid pin number")
+
+        if len({tdi_pin, tdo_pin, tms_pin, tck_pin}) != 4:
+            raise ValueError("Pin numbers must not be shared among pin functions")
+
+        return self._execute_command("openocd_jtag", [tdi_pin, tdo_pin, tms_pin, tck_pin, commands])
+
+    def avrdude_exec(self, avrdude_arguments: str, reset_gpio: int = 0, oe_gpio: Optional[int] = None, host: str = "localhost", port: int = 5556):
+        from .avrprog import avrdude_exec
+        avrdude_exec(self, avrdude_arguments, reset_gpio, oe_gpio, host, port)
 
 
 class PolyglotTurtleXiao(PolyglotTurtle):

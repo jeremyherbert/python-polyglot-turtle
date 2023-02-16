@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # as the address is always right aligned, we are only checking up to 127 or 0x7F inclusive
     for i in range(128):
         try:
-            pt.i2c_exchange(i, b'', read_size=1, clock_rate=I2cClockRate.FAST)
+            pt.i2c_exchange(i, b'', read_size=1, clock_rate=I2cClockRate.STANDARD)
             print("Found device at: 0x{:02X}".format(i))
         except CommandExecutionFailedException:
             pass

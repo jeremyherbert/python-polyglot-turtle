@@ -1,5 +1,7 @@
 from polyglot_turtle import PolyglotTurtleXiao
 
+# FRAM part number is: MB85RC16PN-G-AMERE1
+
 # The base I2C address of the device from the datasheet
 FRAM_I2C_BASE_ADDRESS = 0x50
 
