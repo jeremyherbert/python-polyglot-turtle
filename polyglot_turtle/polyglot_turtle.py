@@ -7,7 +7,7 @@ from packaging.version import Version
 from .hidcborrpc import HidCborRpcDevice
 
 
-POLYGLOT_API_VERSION = "0.3.0"
+POLYGLOT_API_VERSION = "0.3.1"
 
 
 class PinDirection(enum.IntEnum):

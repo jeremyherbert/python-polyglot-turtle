@@ -83,7 +83,7 @@ pt.gpio_set_direction(0, PinDirection.OUTPUT)  # set GPIO 0 to output
 pt.gpio_set_direction(1, PinDirection.INPUT)  # set GPIO 1 to input
 ```
 
-To read from an input or write to an output, use the `gpio_set_level` and `gpio_get_level` functions respectively:
+To read from an input or write to an output, use the `gpio_get_level` and `gpio_set_level` functions respectively:
 
 ```python
 from polyglot_turtle import PolyglotTurtleXiao, PinDirection
